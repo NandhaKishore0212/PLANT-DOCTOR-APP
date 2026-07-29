@@ -1,0 +1,144 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import '../theme/responsive_theme.dart';
+import 'dashboard_screen.dart';
+import 'apple_diseases_screen.dart';
+import 'corn_diseases_screen.dart';
+import 'grape_diseases_screen.dart';
+import 'peach_diseases_screen.dart';
+import 'potato_diseases_screen.dart';
+import 'rice_diseases_screen.dart';
+import 'tomato_diseases_screen.dart';
+
+class TreatmentsScreen extends StatelessWidget {
+  const TreatmentsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final diseases = [
+      {
+        'name': 'Apple Diseases',
+        'emoji': '🍎',
+      },
+      {
+        'name': 'Corn Diseases',
+        'emoji': '🌽',
+      },
+      {
+        'name': 'Grape Diseases',
+        'emoji': '🍇',
+      },
+      {
+        'name': 'Peach Diseases',
+        'emoji': '🍑',
+      },
+      {
+        'name': 'Potato Diseases',
+        'emoji': '🥔',
+      },
+      {
+        'name': 'Rice Diseases',
+        'emoji': '🌾',
+      },
+      {
+        'name': 'Tomato Diseases',
+        'emoji': '🍅',
+      },
+    ];
+
+    return ResponsiveScaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Treatments Library",
+        ),
+      ),
+      body: Center(
+        child: Container(
+          constraints: ResponsiveTheme.isWebLayout(context) ? const BoxConstraints(maxWidth: 900) : null,
+          padding: const EdgeInsets.all(16),
+          child: ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: diseases.length,
+            itemBuilder: (context, index) {
+              return ResponsiveCard(
+                margin: const EdgeInsets.only(bottom: 12),
+                padding: EdgeInsets.zero,
+                onTap: () {
+                  if (index == 0) {
+                    DashboardScreen.navigate(
+                      context,
+                      'apple_diseases',
+                      fallbackWidget: const AppleDiseasesScreen(),
+                    );
+                  }
+  
+                  if (index == 1) {
+                    DashboardScreen.navigate(
+                      context,
+                      'corn_diseases',
+                      fallbackWidget: const CornDiseasesScreen(),
+                    );
+                  }
+  
+                  if (index == 2) {
+                    DashboardScreen.navigate(
+                      context,
+                      'grape_diseases',
+                      fallbackWidget: const GrapeDiseasesScreen(),
+                    );
+                  }
+  
+                  if (index == 3) {
+                    DashboardScreen.navigate(
+                      context,
+                      'peach_diseases',
+                      fallbackWidget: const PeachDiseasesScreen(),
+                    );
+                  }
+  
+                  if (index == 4) {
+                    DashboardScreen.navigate(
+                      context,
+                      'potato_diseases',
+                      fallbackWidget: const PotatoDiseasesScreen(),
+                    );
+                  }
+  
+                  if (index == 5) {
+                    DashboardScreen.navigate(
+                      context,
+                      'rice_diseases',
+                      fallbackWidget: const RiceDiseasesScreen(),
+                    );
+                  }
+  
+                  if (index == 6) {
+                    DashboardScreen.navigate(
+                      context,
+                      'tomato_diseases',
+                      fallbackWidget: const TomatoDiseasesScreen(),
+                    );
+                  }
+                },
+                child: ListTile(
+                  leading: Text(
+                    diseases[index]['emoji'] as String,
+                    style: const TextStyle(fontSize: 28),
+                  ),
+                  title: Text(
+                    diseases[index]['name'] as String,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}

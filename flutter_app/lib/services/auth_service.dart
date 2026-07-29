@@ -1,0 +1,116 @@
+import 'dart:convert';
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../api_config.dart';
+
+class AuthService extends ChangeNotifier {
+  final _storage = const FlutterSecureStorage();
+  String? _token;
+  String? get token => _token;
+
+  Future<void> login(String email, String password) async {
+    final http.Response response;
+    try {
+      response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/auth/token'),
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: {
+          'username': email, 
+          'password': password,
+        },
+      ).timeout(const Duration(seconds: 60));
+    } on TimeoutException catch (_) {
+      throw Exception("Connection timeout. The server is waking up or starting, please try again in a few moments.");
+    } catch (e) {
+      throw Exception("Connection error: $e");
+    }
+
+    if (response.statusCode == 200) {
+      if (response.body.trim().startsWith('<!DOCTYPE') || response.body.trim().startsWith('<html')) {
+        throw Exception("Server is currently waking up from sleep. Please wait a few seconds and try again.");
+      }
+      final data = jsonDecode(response.body);
+      _token = data['access_token'];
+
+      await _storage.write(key: 'auth_token', value: _token);
+
+      // Store user info for Profile Screen
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('email', data['email'] ?? email);
+      await prefs.setString('username', data['username'] ?? email.split('@')[0]);
+
+      notifyListeners();
+    } else {
+      String message = "Login failed (${response.statusCode})";
+      try {
+        final errorJson = jsonDecode(response.body);
+        if (errorJson['detail'] != null) {
+          message = errorJson['detail'];
+        }
+      } catch (_) {
+        message = "Server is waking up or starting. Please wait a few moments and try again.";
+      }
+      throw Exception(message);
+    }
+  }
+
+  Future<void> register(String username, String email, String password) async {
+    final http.Response response;
+    try {
+      response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/auth/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'username': username,
+          'email': email,
+          'password': password,
+        }),
+      ).timeout(const Duration(seconds: 60));
+    } on TimeoutException catch (_) {
+      throw Exception("Connection timeout. The server is waking up or starting, please try again in a few moments.");
+    } catch (e) {
+      throw Exception("Connection error: $e");
+    }
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      if (response.body.trim().startsWith('<!DOCTYPE') || response.body.trim().startsWith('<html')) {
+        throw Exception("Server is currently waking up from sleep. Please wait a few seconds and try again.");
+      }
+      await login(email, password);
+    } else {
+      var detail = 'Registration failed';
+      try {
+        final errorBody = jsonDecode(response.body);
+        detail = errorBody['detail'] ?? 'Registration failed';
+        if (detail is List) {
+          detail = (detail as List).map((e) => e['msg']).join(', ');
+        }
+      } catch (_) {
+        detail = 'Server is waking up or starting. Please wait a few moments and try again.';
+      }
+      throw Exception(detail.toString());
+    }
+  }
+
+  Future<void> logout() async {
+    _token = null;
+    await _storage.delete(key: 'auth_token');
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('username');
+    await prefs.remove('email');
+
+    notifyListeners();
+  }
+
+  Future<void> loadToken() async {
+    _token = await _storage.read(key: 'auth_token');
+    if (_token != null) {
+      notifyListeners();
+    }
+  }
+}
