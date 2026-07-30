@@ -1,0 +1,12 @@
+{
+  "name": "appium-tests",
+  "version": "1.0.0",
+  "description": "Appium E2E Mobile App Frontend Test Suite",
+  "main": "tests/appium-app-tests.js",
+  "scripts": {
+    "test": "node tests/appium-app-tests.js"
+  },
+  "dependencies": {
+    "webdriverio": "^8.24.0"
+  }
+}

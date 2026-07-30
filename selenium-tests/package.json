@@ -1,0 +1,12 @@
+{
+  "name": "selenium-tests",
+  "version": "1.0.0",
+  "description": "Selenium E2E Frontend Web Login Test Suite",
+  "main": "tests/login-tests.js",
+  "scripts": {
+    "test": "node tests/login-tests.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.15.0"
+  }
+}
