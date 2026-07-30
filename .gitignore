@@ -35,4 +35,4 @@ flutter_app_old/
 # Environment and Local DB
 .env
 .env.*
-*.db
+*.db.DS_Store
