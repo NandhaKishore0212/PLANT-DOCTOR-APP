@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -14,7 +15,7 @@ from database import get_db
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT Configuration
-SECRET_KEY = "super_secret_plant_key_12345"
+SECRET_KEY = os.environ.get("SECRET_KEY", "super_secret_plant_key_12345")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
