@@ -1,0 +1,13 @@
+# Exclude large binary files from upload (they are pulled from GitHub)
+*.wasm
+*.otf
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+__pycache__/
+*.pyc
+*.pyo
+.git/
+venv/
