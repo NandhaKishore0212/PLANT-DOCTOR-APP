@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 class ApiConfig {
-  // Public tunnel URL — works on ANY network (4G, 5G, any WiFi)
-  // No need to be on the same WiFi as the Mac!
-  static const String _publicTunnelUrl = "https://plantdoctor-ai.loca.lt";
+  // Permanent Cloud Backend URL — works anywhere (4G, 5G, WiFi) without Mac running
+  static const String _publicTunnelUrl = "https://plant-doctor-backend-production-6566.up.railway.app";
 
   static String get baseUrl {
     if (kIsWeb) {
