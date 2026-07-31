@@ -85,12 +85,14 @@ app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 logger.info(f"Serving uploaded images from {uploads_dir}")
 
 # Serve frontend static files
-# Make sure this is AFTER router inclusions
-# Check for 'web' first (common for Flutter Web builds), then fallback to 'frontend'
+web_dir_backend = os.path.join(os.path.dirname(__file__), "web")
 web_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "web")
 frontend_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "frontend")
 
-if os.path.exists(web_dir):
+if os.path.exists(web_dir_backend):
+    app.mount("/", StaticFiles(directory=web_dir_backend, html=True), name="web")
+    logger.info(f"Serving frontend from {web_dir_backend}")
+elif os.path.exists(web_dir):
     app.mount("/", StaticFiles(directory=web_dir, html=True), name="web")
     logger.info(f"Serving frontend from {web_dir}")
 elif os.path.exists(frontend_dir):
